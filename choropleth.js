@@ -14,6 +14,10 @@ var path = d3.geoPath()
 
 var color = d3.scaleSequential(d3.interpolateReds);
 
+var tooltip = d3.select('body').append('div')
+  .attr('class', 'tooltip')
+  .style('opacity', 0);
+
 var svg = d3.select('body')
   .append('svg')
   .attrs({
@@ -93,7 +97,22 @@ d3.json('data/final.json', function(error, data) {
         return color(scaleDensity(density))
       }
     })
-    .on('click', clicked);
+    .on('click', clicked)
+    .on('mouseover', function(d) {
+      tooltip.transition()
+        .duration(200)
+        .style('opacity', .9);
+      tooltip.html(d.properties.county + '<br/>'  + d.properties.density)
+        .styles({
+          'left': (d3.event.pageX) + 'px',
+          'top': (d3.event.pageY) + 'px'
+        })
+    })
+    .on('mouseout', function(d) {
+      tooltip.transition()
+        .duration(300)
+        .style('opacity', 0);
+    });
 
   var legendContainerSettings = {
     x: width * 0.03,

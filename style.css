@@ -8,6 +8,20 @@
   pointer-events: all;
 }
 
+div.tooltip {
+  position: absolute;
+  text-align: center;
+  width: 70px;
+  height: 55px;
+  padding: 2px;
+  font: 12px sans-serif;
+  background: white;
+  color: black;
+  border: 1px solid grey;
+  border-radius: 8px;
+  pointer-events: none;
+}
+
 #legend-container {
   fill: white;
   opacity: 0.9;
