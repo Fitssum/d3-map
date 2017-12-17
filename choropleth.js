@@ -34,7 +34,7 @@ svg.append('rect')
     'width': width,
     'height': height
   })
-  .on('click', clicked);//will act to zoom out our map when clicked outside the counties
+  .on('click', clicked);//will act to zoom out the map when clicked outside the counties
 
 var g = svg.append('g');
 
@@ -96,7 +96,7 @@ d3.json('data/final.json', function(error, data) {
       'class': 'county',
       'stroke': 'grey',
       'stroke-width': 0.3,
-      'cursor': 'pointer',//updates our cursor when we hover on map
+      'cursor': 'pointer',//updates the cursor when we hover on map
       'fill': function(d) {
         var countyDensity = d.properties.density;
         var density = countyDensity ? countyDensity : 0;
