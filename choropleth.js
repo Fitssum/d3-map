@@ -20,7 +20,7 @@ var tooltip = d3.select('body').append('div')
   .attr('class', 'tooltip')
   .style('opacity', 0);//hides county title when hovered
 
-//this svg code uses the determined w&h to set the w&h of our svg canvas
+//this svg code uses the determined w&h to set the w&h of the svg canvas
 var svg = d3.select('body')
   .append('svg')
   .attrs({
