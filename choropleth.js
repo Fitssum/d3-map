@@ -18,7 +18,7 @@ var color = d3.scaleSequential(d3.interpolateReds);
 
 var tooltip = d3.select('body').append('div')
   .attr('class', 'tooltip')
-  .style('opacity', 0);
+  .style('opacity', 0);//hides county title when hovered
 
 //this svg code uses the determined w&h to set the w&h of our svg canvas
 var svg = d3.select('body')
@@ -106,11 +106,11 @@ d3.json('data/final.json', function(error, data) {
     .on('click', clicked)
     .on('mouseover', function(d) {
       tooltip.transition()
-        .duration(200)
-        .style('opacity', .9);
+        .duration(200)//shorter duration to add text (county) quickly
+        .style('opacity', .9);//opacity added here (adds the tooltip text)
       tooltip.html(d.properties.county + '<br/>'  + d.properties.density)
         .styles({
-          'left': (d3.event.pageX) + 'px',
+          'left': (d3.event.pageX) + 'px',//to position tooltips according to current cursor position
           'top': (d3.event.pageY) + 'px'
         })
     })
