@@ -1,5 +1,6 @@
 'use strict';
 
+//uses the browser window and document elements to determine the current screen size
 var w = window;
 var doc = document;
 var el = doc.documentElement;
@@ -8,6 +9,7 @@ var width = w.innerWidth || el.clientWidth || body.clientWidth;
 var height = w.innerHeight|| el.clientHeight|| body.clientHeight;
 var centered;
 
+//refer d3-geo projection document in gitHub for list of d3 projections
 var projection = d3.geoAlbersUsa();
 var path = d3.geoPath()
   .projection(projection);
@@ -18,6 +20,7 @@ var tooltip = d3.select('body').append('div')
   .attr('class', 'tooltip')
   .style('opacity', 0);
 
+//this svg code uses the determined w&h to set the w&h of our svg canvas
 var svg = d3.select('body')
   .append('svg')
   .attrs({
@@ -31,13 +34,13 @@ svg.append('rect')
     'width': width,
     'height': height
   })
-  .on('click', clicked);
+  .on('click', clicked);//will act to zoom out our map when clicked outside the counties
 
 var g = svg.append('g');
 
 var zoomSettings = {
   duration: 1000,
-  ease: d3.easeCubicOut,
+  ease: d3.easeCubicOut,//see documentation
   zoomLevel: 5
 };
 
@@ -46,9 +49,9 @@ function clicked(d) {
   var y;
   var zoomLevel;
 
-  if (d && centered !== d) {
+  if (d && centered !== d) {//d stands for current county
     var centroid = path.centroid(d);
-    x = centroid[0];
+    x = centroid[0];//zero index
     y = centroid[1];
     zoomLevel = zoomSettings.zoomLevel;
     centered = d;
@@ -59,27 +62,30 @@ function clicked(d) {
     centered = null;
   }
 
-  g.transition()
+  g.transition()//animated change to the DOM (see documentation)
     .duration(zoomSettings.duration)
     .ease(zoomSettings.ease)
     .attr('transform', 'translate(' + width / 2 + ',' + height / 2 + ')scale(' + zoomLevel + ')translate(' + -x + ',' + -y + ')');
 }
 
+//adds topojson data(topology object in console)
 d3.json('data/final.json', function(error, data) {
   if (error) {
     return console.error(error);
   }
 
+//refer to d3 scale chromatic in d3 documentation (color interpolations)
   var counties = topojson.feature(data, data.objects.counties).features;
   var meanDensity = d3.mean(counties, function(d) {
     return d.properties.density;
   });
 
+  //sets color boxes in relation to pop density
   var scaleDensity = d3.scaleQuantize()
     .domain([0, meanDensity])
-    .range([0, 0.2, 0.4, 0.6, 0.8, 1]);
+    .range([0, 0.2, 0.4, 0.6, 0.8, 1]);//quantized scale contrary to linear
 
-  g.append('g')
+  g.append('g')//assigns the click handler to each counties
     .attr('class', 'county')
     .selectAll('path')
     .data(counties)
@@ -90,7 +96,7 @@ d3.json('data/final.json', function(error, data) {
       'class': 'county',
       'stroke': 'grey',
       'stroke-width': 0.3,
-      'cursor': 'pointer',
+      'cursor': 'pointer',//updates our cursor when we hover on map
       'fill': function(d) {
         var countyDensity = d.properties.density;
         var density = countyDensity ? countyDensity : 0;
@@ -114,6 +120,7 @@ d3.json('data/final.json', function(error, data) {
         .style('opacity', 0);
     });
 
+//adds legend container
   var legendContainerSettings = {
     x: width * 0.03,
     y: height * 0.82,
@@ -123,6 +130,7 @@ d3.json('data/final.json', function(error, data) {
     roundY: 10
   }
 
+//refer d3 selection multi documentation (refactoring code)
   var legendContainer = svg.append('rect')
     .attrs({
       'x': legendContainerSettings.x,
@@ -142,6 +150,7 @@ d3.json('data/final.json', function(error, data) {
 
   var legendData = [0, 0.2, 0.4, 0.6, 0.8, 1];
 
+//sets color scale to legend
   var legend = svg.selectAll('g.legend')
     .data(legendData)
     .enter().append('g')
@@ -163,6 +172,7 @@ d3.json('data/final.json', function(error, data) {
       'opacity': 1
     });
 
+//check d3 format documentation on gitHub
   var formatDecimal = d3.format('.1f');
 
   function getPopDensity(rangeValue) {
@@ -178,6 +188,7 @@ d3.json('data/final.json', function(error, data) {
     '>' + getPopDensity(0.8)
   ];
 
+//adds and positions text to legend
   legend.append('text')
     .attrs({
       'x': function(d, i) {
@@ -192,7 +203,7 @@ d3.json('data/final.json', function(error, data) {
 
   legend.append('text')
     .attrs({
-      'x': legendContainerSettings.x + 13,
+      'x': legendContainerSettings.x + 13,//trial and error to perfection
       'y': legendContainerSettings.y + 29
     })
     .styles({
